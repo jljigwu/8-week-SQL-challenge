@@ -3,6 +3,11 @@
 ## Business Objective 
 > Danny, the restaurant manager, is driven by the desire to understand his customers better. By leveraging data analytics, he aims to answer key questions about their visiting patterns, expenditure patterns, and preferred menu items. This strategic approach allows Danny to tailor the restaurant experience, optimize offerings, and enhance customer satisfaction.
 
+# Relationship Diagram
+![image](https://github.com/jljigwu/8-week-SQL-challenge/assets/107698857/37e61127-42aa-43f9-a367-1af4ae960b96)
+
+
+
 1. What is the total amount each customer spent at the restaurant?
    
 ```sql
