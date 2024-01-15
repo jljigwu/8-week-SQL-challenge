@@ -87,8 +87,8 @@ Answer:
 How many days has each customer visited the restaurant?
 ```sql
 SELECT
-  	customer_id,
-   	COUNT( DISTINCT order_date) as visited_times -- avoid duplicate counting of days
+   customer_id,
+   COUNT( DISTINCT order_date) as visited_times -- avoid duplicate counting of days
 FROM dannys_diner.sales 
 GROUP BY customer_id
 ORDER BY visited_times DESC; 
@@ -106,7 +106,7 @@ What was the first item from the menu purchased by each customer?
 WITH ranked_sales AS
 (
 SELECT
-  	sales.customer_id,
+    sales.customer_id,
     menu.product_name,
     sales.order_date,
   	RANK() 
@@ -116,7 +116,7 @@ JOIN dannys_diner.menu ON sales.product_id = menu.product_id
 )
 
 SELECT 
-	customer_id,
+    customer_id,
     product_name
 FROM ranked_sales
 WHERE rank = 1
@@ -133,8 +133,8 @@ Answer:
 **Query #4**
 What is the most purchased item on the menu and how many times was it purchased by all customers?
 ```sql
-SELECT 
-	menu.product_name,
+SELECT
+    menu.product_name,
     COUNT(sales.product_id) as counted_sales
 FROM dannys_diner.menu
 JOIN dannys_diner.sales ON menu.product_id = sales.product_id
@@ -152,7 +152,7 @@ Answer:
 WITH ranked_product AS
 (
  SELECT
- 	menu.product_name,
+    menu.product_name,
     sales.customer_id,
     COUNT(menu.product_id) AS order_count,
     RANK() 
