@@ -139,6 +139,7 @@ SELECT
 FROM dannys_diner.menu
 JOIN dannys_diner.sales ON menu.product_id = sales.product_id
 GROUP BY product_name
+order by counted_sales DESC
 LIMIT 1;
 ```
 Answer:
