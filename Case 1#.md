@@ -267,9 +267,9 @@ Answer:
 | A           | 2           | 25          |
 | B           | 3           | 40          |
 
-**Query #9**
+
+**Query #9** If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?
 ```sql
-If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?
 WITH points AS (
   SELECT 
     menu.product_id, 
@@ -294,3 +294,136 @@ Answer:
 | B           | 940          |
 | A           | 860          |
 | C           | 360          |
+
+
+**Query #10**
+ In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi — how many points do customer A and B have at the end of January?
+ ```sql
+WITH promo AS 
+(
+SELECT *
+	  , (join_date + INTERVAL '6 days')::date as promo
+	  , (DATE_TRUNC('month', join_date) + INTERVAL '1 month - 1 day')::date as time
+FROM dannys_diner.members m
+)
+
+SELECT 
+	customer_id AS customer,
+    SUM(CASE
+		WHEN  product_name = 'sushi'
+		 THEN price * 20
+		WHEN order_date BETWEEN join_date AND promo
+		 THEN price * 20
+		ELSE price * 10
+	 END) points
+FROM promo p
+JOIN dannys_diner.sales s
+USING(customer_id)
+JOIN dannys_diner.menu m
+USING(product_id)
+WHERE order_date <= time
+GROUP BY customer_id
+
+```
+
+Answer:
+
+| customer_id | total_points |
+| ----------- | ------------ |
+| B           | 320          |
+| A           | 780          |
+
+
+
+**Bonus Query #1** Join All The Things - Recreate the following table output using the available data:
+
+| customer_id | order_date               | product_name | price | member |
+| ----------- | ------------------------ | ------------ | ----- | ------ |
+| A           | 2021-01-01T00:00:00.000Z | curry        | 15    | N      |
+| A           | 2021-01-01T00:00:00.000Z | sushi        | 10    | N      |
+| B           | 2021-01-01T00:00:00.000Z | curry        | 15    | N      |
+| C           | 2021-01-01T00:00:00.000Z | ramen        | 12    | N      |
+| C           | 2021-01-01T00:00:00.000Z | ramen        | 12    | N      |
+| B           | 2021-01-02T00:00:00.000Z | curry        | 15    | N      |
+| B           | 2021-01-04T00:00:00.000Z | sushi        | 10    | N      |
+| A           | 2021-01-07T00:00:00.000Z | curry        | 15    | Y      |
+| C           | 2021-01-07T00:00:00.000Z | ramen        | 12    | N      |
+| A           | 2021-01-10T00:00:00.000Z | ramen        | 12    | Y      |
+| A           | 2021-01-11T00:00:00.000Z | ramen        | 12    | Y      |
+| A           | 2021-01-11T00:00:00.000Z | ramen        | 12    | Y      |
+| B           | 2021-01-11T00:00:00.000Z | sushi        | 10    | Y      |
+| B           | 2021-01-16T00:00:00.000Z | ramen        | 12    | Y      |
+| B           | 2021-02-01T00:00:00.000Z | ramen        | 12    | Y      |
+
+``` sql
+SELECT 
+  s.customer_id,
+  s.order_date,
+  m.product_name,
+  m.price,
+  CASE 
+    WHEN order_date < join_date OR join_date is null
+      THEN 'N'
+    ELSE 'Y'
+  END AS member
+FROM 
+  dannys_diner.sales s
+  LEFT JOIN dannys_diner.members mem
+    USING(customer_id)
+  LEFT JOIN dannys_diner.menu m
+    USING (product_id)
+ORDER BY order_date,customer_id,product_name;
+```
+
+**Bonus Query #2** Rank All The Things - Recreate the following table output using the available data
+
+
+| customer_id | order_date               | product_name | price | member | ranking |
+| ----------- | ------------------------ | ------------ | ----- | ------ | ------- |
+| A           | 2021-01-01T00:00:00.000Z | sushi        | 10    | N      |         |
+| A           | 2021-01-01T00:00:00.000Z | curry        | 15    | N      |         |
+| A           | 2021-01-07T00:00:00.000Z | curry        | 15    | Y      | 1       |
+| A           | 2021-01-10T00:00:00.000Z | ramen        | 12    | Y      | 2       |
+| A           | 2021-01-11T00:00:00.000Z | ramen        | 12    | Y      | 3       |
+| A           | 2021-01-11T00:00:00.000Z | ramen        | 12    | Y      | 3       |
+| B           | 2021-01-01T00:00:00.000Z | curry        | 15    | N      |         |
+| B           | 2021-01-02T00:00:00.000Z | curry        | 15    | N      |         |
+| B           | 2021-01-04T00:00:00.000Z | sushi        | 10    | N      |         |
+| B           | 2021-01-11T00:00:00.000Z | sushi        | 10    | Y      | 1       |
+| B           | 2021-01-16T00:00:00.000Z | ramen        | 12    | Y      | 2       |
+| B           | 2021-02-01T00:00:00.000Z | ramen        | 12    | Y      | 3       |
+| C           | 2021-01-01T00:00:00.000Z | ramen        | 12    | N      |         |
+| C           | 2021-01-01T00:00:00.000Z | ramen        | 12    | N      |         |
+| C           | 2021-01-07T00:00:00.000Z | ramen        | 12    | N      |         |
+
+
+
+
+``` sql
+WITH status AS (
+	SELECT 
+		s.customer_id,
+		s.order_date,
+		m.product_name,
+		m.price,
+		CASE 
+			WHEN order_date < join_date OR join_date is null
+			 THEN 'N'
+			ELSE 'Y'
+		END member
+		FROM dannys_diner.sales s
+		LEFT JOIN dannys_diner.members mem
+		USING(customer_id)
+		LEFT JOIN dannys_diner.menu m
+		USING (product_id)
+		ORDER BY customer_id, order_date
+		)
+
+SELECT *,
+	CASE
+	  WHEN member = 'N'
+	    THEN null
+	  ELSE DENSE_RANK() OVER (PARTITION BY customer_id, member ORDER BY order_date)							 
+	END ranking
+FROM status s;
+```
