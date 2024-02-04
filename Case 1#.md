@@ -401,29 +401,27 @@ ORDER BY order_date,customer_id,product_name;
 
 ``` sql
 WITH status AS (
-	SELECT 
-		s.customer_id,
-		s.order_date,
-		m.product_name,
-		m.price,
-		CASE 
-			WHEN order_date < join_date OR join_date is null
-			 THEN 'N'
-			ELSE 'Y'
-		END member
-		FROM dannys_diner.sales s
-		LEFT JOIN dannys_diner.members mem
-		USING(customer_id)
-		LEFT JOIN dannys_diner.menu m
-		USING (product_id)
-		ORDER BY customer_id, order_date
-		)
+SELECT 
+  s.customer_id,
+  s.order_date,
+  m.product_name,
+  m.price,
+  CASE 
+    WHEN order_date < join_date OR join_date is null
+      THEN 'N'
+    ELSE 'Y'
+  END member
+FROM dannys_diner.sales s
+LEFT JOIN dannys_diner.members mem USING(customer_id)
+LEFT JOIN dannys_diner.menu m USING (product_id)
+ORDER BY customer_id, order_date
+)
 
 SELECT *,
-	CASE
-	  WHEN member = 'N'
-	    THEN null
-	  ELSE DENSE_RANK() OVER (PARTITION BY customer_id, member ORDER BY order_date)							 
-	END ranking
+ CASE
+   WHEN member = 'N'
+     THEN null
+   ELSE DENSE_RANK() OVER (PARTITION BY customer_id, member ORDER BY order_date)							 
+ END ranking
 FROM status s;
 ```
