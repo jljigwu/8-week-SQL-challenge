@@ -83,6 +83,9 @@ Answer:
 | C           | 36          |
 
 
+
+---
+
 **Query #2**
 How many days has each customer visited the restaurant?
 ```sql
@@ -99,6 +102,8 @@ Answer:
 | B           | 6             |
 | A           | 4             |
 | C           | 2             |
+
+---
 
 **Query #3**
 What was the first item from the menu purchased by each customer?
@@ -130,6 +135,8 @@ Answer:
 | B           | curry        |
 | C           | ramen        |
 
+---
+
 **Query #4**
 What is the most purchased item on the menu and how many times was it purchased by all customers?
 ```sql
@@ -146,6 +153,8 @@ Answer:
 | product_name | counted_sales |
 | ------------ | ------------- |
 | ramen        | 8             |
+
+---
 
 **Query #5**
  Which item was the most popular for each customer?
@@ -179,6 +188,8 @@ WITH ranked_product AS
 | B           | curry        | 2           |
 | C           | ramen        | 3           |
 
+---
+
 **Query #6**
  Which item was purchased first by the customer after they became a member?
 ```sql
@@ -210,6 +221,8 @@ Answer:
 | ----------- | ------------------------ | ------------------------ | ------------ |
 | A           | 2021-01-07T00:00:00.000Z | 2021-01-10T00:00:00.000Z | ramen        |
 | B           | 2021-01-09T00:00:00.000Z | 2021-01-11T00:00:00.000Z | sushi        |
+
+---
 
 **Query #7**
  Which item was purchased just before the customer became a member?
@@ -244,6 +257,7 @@ Answer:
 | A           | 2021-01-07T00:00:00.000Z | 2021-01-01T00:00:00.000Z | curry        |
 | B           | 2021-01-09T00:00:00.000Z | 2021-01-04T00:00:00.000Z | sushi        |
 
+---
 
 **Query #8**
 What is the total items and amount spent for each member before they became a member?
@@ -267,10 +281,12 @@ Answer:
 | A           | 2           | 25          |
 | B           | 3           | 40          |
 
+---
 
 **Query #9** If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?
 ```sql
-WITH points AS (
+WITH points AS
+(
   SELECT 
     menu.product_id, 
     CASE
@@ -295,6 +311,7 @@ Answer:
 | A           | 860          |
 | C           | 360          |
 
+---
 
 **Query #10**
  In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi — how many points do customer A and B have at the end of January?
@@ -333,7 +350,7 @@ Answer:
 | B           | 820          |
 | A           | 1370         |
 
-
+---
 
 **Bonus Query #1** Join All The Things - Recreate the following table output using the available data:
 
@@ -374,6 +391,7 @@ FROM
     USING (product_id)
 ORDER BY order_date,customer_id,product_name;
 ```
+---
 
 **Bonus Query #2** Rank All The Things - Recreate the following table output using the available data
 
@@ -400,7 +418,8 @@ ORDER BY order_date,customer_id,product_name;
 
 
 ``` sql
-WITH status AS (
+WITH status AS
+(
 SELECT 
   s.customer_id,
   s.order_date,
