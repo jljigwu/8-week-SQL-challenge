@@ -4,7 +4,7 @@
 > Danny wants to expand his business to include suppliers. Now his database is even larger
 
 ## Relationship Diagram
-![image](https://github.com/jljigwu/8-week-SQL-challenge/assets/107698857/88ec9033-4bbe-4c06-9f67-cd211b0bce9a)
+![image](https://github.com/jljigwu/8-week-SQL-challenge/assets/107698857/2b255521-1a4b-46eb-aa7e-cfbbcd7dd05a)
 
 
 ## Schema (PostgreSQL v13)
